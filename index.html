@@ -4,49 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Tug of War Scoreboard</title>
-  <meta charset="UTF-8">
-  <title>Tug of War Game</title>
   <style>
     body {
       margin: 0;
       background: white;
-      text-align: center;
       font-family: Arial, sans-serif;
       overflow: hidden;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      margin-bottom: 10px;
     }
 
     .container {
-    #scoreboard {
       width: 100%;
       height: 50vh;
       position: relative;
-      height: 200px;
       background: white;
       border-top: 2px solid #ccc;
       border-bottom: 2px solid #ccc;
-      position: relative;
-      overflow: hidden;
-      border: 3px solid black;
-      margin-bottom: 30px;
     }
 
     .center-line {
       position: absolute;
       top: 0;
       bottom: 0;
-      right: 50%;
       left: 50%;
+      right: 50%
       width: 4px;
-    #indicator {
-      width: 10px;
-      height: 100%;
       background: black;
       z-index: 1;
     }
@@ -71,9 +52,6 @@
       background: linear-gradient(to right, red, green);
       transform-origin: left;
       height: 100%;
-      left: 50%; /* Centered initially */
-      transform: translateX(-50%);
-      transition: left 0.3s ease;
     }
 
     .score-text {
@@ -95,19 +73,9 @@
 
     input[type="range"] {
       width: 80%;
-    #field {
-      margin: 30px auto;
-      width: 90%;
-      height: 30px;
-      background: #c18c49;
-      border-radius: 15px;
-      position: relative;
     }
 
     .field {
-    #rope {
-      height: 10px;
-      background: #b77f3b;
       position: absolute;
       bottom: 0;
       height: 50vh;
@@ -124,17 +92,13 @@
       height: 20px;
       background: #c58e4b;
       border-radius: 10px;
-      top: 50%;
-      transform: translateY(-50%);
     }
 
     .ribbon {
       position: absolute;
       top: -10px;
-    #ribbon {
       width: 10px;
       height: 40px;
-      height: 30px;
       background: red;
       border-radius: 3px;
     }
@@ -157,9 +121,6 @@
       background: red;
       animation: fall 3s linear infinite;
       opacity: 0.7;
-      left: 50%;
-      transform: translateX(-50%);
-      transition: left 0.3s ease;
     }
 
     @keyframes fall {
@@ -169,9 +130,6 @@
       100% {
         transform: translateY(100vh) rotate(360deg);
       }
-    #slider {
-      width: 90%;
-      margin-top: 40px;
     }
   </style>
 </head>
@@ -183,21 +141,15 @@
   <div class="right-bar" id="rightBar"></div>
   <div class="center-line"></div>
 </div>
-<h1>Tug of War: Team A vs Team B</h1>
 
 <div class="field">
   <div class="rope">
     <div class="ribbon" id="ribbon"></div>
   </div>
-<div id="scoreboard">
-  <div id="indicator"></div>
 </div>
 
 <div class="slider-container">
   <input type="range" min="-100" max="100" value="0" id="slider" />
-<div id="field">
-  <div id="rope"></div>
-  <div id="ribbon"></div>
 </div>
 
 <div class="celebration" id="celebration"></div>
@@ -205,13 +157,11 @@
 <audio id="victorySound">
   <source src="https://www.soundjay.com/human/applause-8.mp3" type="audio/mpeg">
 </audio>
-<input type="range" id="slider" min="0" max="100" value="50">
 
 <script>
   const slider = document.getElementById('slider');
   const leftBar = document.getElementById('leftBar');
   const rightBar = document.getElementById('rightBar');
-  const indicator = document.getElementById('indicator');
   const ribbon = document.getElementById('ribbon');
   const celebration = document.getElementById('celebration');
   const sound = document.getElementById('victorySound');
@@ -229,13 +179,9 @@
       leftBar.style.width = '0%';
       rightBar.style.width = '0%';
     }
-  const scoreboard = document.getElementById('scoreboard');
 
     const ribbonOffset = 40 * value / 100;
     ribbon.style.left = `calc(50% + ${ribbonOffset}%)`;
-  slider.addEventListener('input', () => {
-    const value = parseInt(slider.value);
-    const percentageOffset = value - 50;
 
     if (Math.abs(value) === 100 && !hasCelebrated) {
       celebrate();
@@ -262,19 +208,11 @@
       celebration.style.display = 'none';
     }, 3000);
   }
-    // Move ribbon (same logic)
-    const fieldWidth = document.getElementById('field').offsetWidth;
-    const ribbonLeft = (value / 100) * fieldWidth;
-    ribbon.style.left = `${ribbonLeft}px`;
 
   slider.addEventListener('input', () => {
     const value = parseInt(slider.value, 10);
     updateBars(value);
   });
-    // Move scoreboard indicator accordingly
-    const boardWidth = scoreboard.offsetWidth;
-    const indicatorLeft = (percentageOffset / 100) * boardWidth + (boardWidth / 2);
-    indicator.style.left = `${indicatorLeft}px`;
 
   document.addEventListener('keydown', (e) => {
     let val = parseInt(slider.value);
@@ -282,11 +220,6 @@
       val += 5;
     } else if (e.key === 'ArrowLeft' && val > -100) {
       val -= 5;
-    // Trigger celebration (placeholder, you can customize)
-    if (value <= 0) {
-      alert("🎉 Team A Wins!");
-    } else if (value >= 100) {
-      alert("🎉 Team B Wins!");
     }
     slider.value = val;
     updateBars(val);
@@ -297,3 +230,4 @@
 </script>
 
 </body>
+</html>
