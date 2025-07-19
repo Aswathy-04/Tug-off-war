@@ -1,232 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tug of War Scoreboard</title>
+  <meta charset="UTF-8">
+  <title>Tug of War Game</title>
   <style>
     body {
-      margin: 0;
-      background: white;
+      text-align: center;
       font-family: Arial, sans-serif;
-      overflow: hidden;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
     }
 
-    .container {
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #scoreboard {
       width: 100%;
-      height: 50vh;
-      position: relative;
+      height: 200px;
       background: white;
-      border-top: 2px solid #ccc;
-      border-bottom: 2px solid #ccc;
-    }
-
-    .center-line {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 50%;
-      left: 50%;
-      width: 4px;
-      background: black;
-      z-index: 1;
-    }
-
-    .left-bar,
-    .right-bar {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      z-index: 0;
-    }
-
-    .left-bar {
-      right: 50%;
-      background: linear-gradient(to left, red, green);
-      transform-origin: right;
-      height: 100%;
-    }
-
-    .right-bar {
-      left: 50%;
-      background: linear-gradient(to right, red, green);
-      transform-origin: left;
-      height: 100%;
-    }
-
-    .score-text {
-      position: absolute;
-      top: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 2rem;
-      z-index: 2;
-      color: black;
-    }
-
-    .slider-container {
-      position: absolute;
-      width: 100%;
-      bottom: 20px;
-      text-align: center;
-    }
-
-    input[type="range"] {
-      width: 80%;
-    }
-
-    .field {
-      position: absolute;
-      bottom: 0;
-      height: 50vh;
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f5f5f5;
-    }
-
-    .rope {
       position: relative;
-      width: 80%;
-      height: 20px;
-      background: #c58e4b;
-      border-radius: 10px;
+      overflow: hidden;
+      border: 3px solid black;
+      margin-bottom: 30px;
     }
 
-    .ribbon {
-      position: absolute;
-      top: -10px;
+    #indicator {
       width: 10px;
-      height: 40px;
-      background: red;
-      border-radius: 3px;
+      height: 100%;
+      background: black;
+      position: absolute;
+      top: 0;
+      left: 50%; /* Centered initially */
+      transform: translateX(-50%);
+      transition: left 0.3s ease;
     }
 
-    .celebration {
+    #field {
+      margin: 30px auto;
+      width: 90%;
+      height: 30px;
+      background: #c18c49;
+      border-radius: 15px;
+      position: relative;
+    }
+
+    #rope {
+      height: 10px;
+      background: #b77f3b;
       position: absolute;
       width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      overflow: hidden;
-      display: none;
+      top: 50%;
+      transform: translateY(-50%);
     }
 
-    .confetti {
-      position: absolute;
+    #ribbon {
       width: 10px;
-      height: 10px;
+      height: 30px;
       background: red;
-      animation: fall 3s linear infinite;
-      opacity: 0.7;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: left 0.3s ease;
     }
 
-    @keyframes fall {
-      0% {
-        transform: translateY(-20px) rotate(0deg);
-      }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
-      }
+    #slider {
+      width: 90%;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="score-text">Tug of War: Team A vs Team B</div>
-  <div class="left-bar" id="leftBar"></div>
-  <div class="right-bar" id="rightBar"></div>
-  <div class="center-line"></div>
+<h1>Tug of War: Team A vs Team B</h1>
+
+<div id="scoreboard">
+  <div id="indicator"></div>
 </div>
 
-<div class="field">
-  <div class="rope">
-    <div class="ribbon" id="ribbon"></div>
-  </div>
+<div id="field">
+  <div id="rope"></div>
+  <div id="ribbon"></div>
 </div>
 
-<div class="slider-container">
-  <input type="range" min="-100" max="100" value="0" id="slider" />
-</div>
-
-<div class="celebration" id="celebration"></div>
-
-<audio id="victorySound">
-  <source src="https://www.soundjay.com/human/applause-8.mp3" type="audio/mpeg">
-</audio>
+<input type="range" id="slider" min="0" max="100" value="50">
 
 <script>
   const slider = document.getElementById('slider');
-  const leftBar = document.getElementById('leftBar');
-  const rightBar = document.getElementById('rightBar');
+  const indicator = document.getElementById('indicator');
   const ribbon = document.getElementById('ribbon');
-  const celebration = document.getElementById('celebration');
-  const sound = document.getElementById('victorySound');
-
-  let hasCelebrated = false;
-
-  function updateBars(value) {
-    if (value > 0) {
-      rightBar.style.width = (value / 100 * 50) + '%';
-      leftBar.style.width = '0%';
-    } else if (value < 0) {
-      leftBar.style.width = (-value / 100 * 50) + '%';
-      rightBar.style.width = '0%';
-    } else {
-      leftBar.style.width = '0%';
-      rightBar.style.width = '0%';
-    }
-
-    const ribbonOffset = 40 * value / 100;
-    ribbon.style.left = `calc(50% + ${ribbonOffset}%)`;
-
-    if (Math.abs(value) === 100 && !hasCelebrated) {
-      celebrate();
-      hasCelebrated = true;
-    } else if (Math.abs(value) < 100) {
-      hasCelebrated = false;
-      celebration.style.display = 'none';
-    }
-  }
-
-  function celebrate() {
-    sound.play();
-    celebration.innerHTML = '';
-    celebration.style.display = 'block';
-    for (let i = 0; i < 100; i++) {
-      const confetti = document.createElement('div');
-      confetti.className = 'confetti';
-      confetti.style.left = Math.random() * 100 + '%';
-      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 60%)`;
-      confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
-      celebration.appendChild(confetti);
-    }
-    setTimeout(() => {
-      celebration.style.display = 'none';
-    }, 3000);
-  }
+  const scoreboard = document.getElementById('scoreboard');
 
   slider.addEventListener('input', () => {
-    const value = parseInt(slider.value, 10);
-    updateBars(value);
-  });
+    const value = parseInt(slider.value);
+    const percentageOffset = value - 50;
 
-  document.addEventListener('keydown', (e) => {
-    let val = parseInt(slider.value);
-    if (e.key === 'ArrowRight' && val < 100) {
-      val += 5;
-    } else if (e.key === 'ArrowLeft' && val > -100) {
-      val -= 5;
+    // Move ribbon (same logic)
+    const fieldWidth = document.getElementById('field').offsetWidth;
+    const ribbonLeft = (value / 100) * fieldWidth;
+    ribbon.style.left = `${ribbonLeft}px`;
+
+    // Move scoreboard indicator accordingly
+    const boardWidth = scoreboard.offsetWidth;
+    const indicatorLeft = (percentageOffset / 100) * boardWidth + (boardWidth / 2);
+    indicator.style.left = `${indicatorLeft}px`;
+
+    // Trigger celebration (placeholder, you can customize)
+    if (value <= 0) {
+      alert("🎉 Team A Wins!");
+    } else if (value >= 100) {
+      alert("🎉 Team B Wins!");
     }
-    slider.value = val;
-    updateBars(val);
   });
-
-  // Initial render
-  updateBars(0);
 </script>
 
 </body>
